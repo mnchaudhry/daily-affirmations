@@ -64,7 +64,6 @@ export default function Page() {
           data={DATA}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          pagingEnabled
           showsVerticalScrollIndicator={false}
           snapToAlignment="center"
           decelerationRate="fast"
