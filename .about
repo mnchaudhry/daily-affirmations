@@ -1,0 +1,7 @@
+Daily Affirmations (The Aesthetic Habit)
+The Functionality: A high-end "Mental Wellness" app that focuses on visual "WOW" factor. It uses Glassmorphism UI (frosted glass effects) and dynamic gradients that change based on the time of day. Users swipe through a deck of 3D-stacked cards containing motivational quotes. Features include a "Daily Reminder" notification and the ability to download any quote as a high-resolution wallpaper for their phone.
+The Requirements:
+Library: Framer Motion for smooth card-swiping animations.
+Content: A curated JSON file with 365+ categorized quotes (Health, Wealth, Love).
+Native Feature: Local Notifications plugin for the daily quote delivery.
+Ad Strategy: Rewarded Video to "Unlock Premium Backgrounds"; Banner on the main scroll.
