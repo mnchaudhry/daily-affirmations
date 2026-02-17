@@ -1,8 +1,11 @@
 import { AppColors, Fonts } from '@/constants/theme';
-import { Bell, ChevronRight } from 'lucide-react-native';
+import ResourceCard from '@/src/screens/favorites/ResourceCard';
+import { Bell } from 'lucide-react-native';
 import React from 'react';
-import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+//////////////////////////////////////////// VARIABLES ////////////////////////////////////////////
 
 const RESOURCES = [
   { id: '1', emoji: '📖', title: 'Guided Meditations', count: 24, desc: 'Find your calm' },
@@ -13,7 +16,10 @@ const RESOURCES = [
   { id: '6', emoji: '🎵', title: 'Sound Therapy', count: 30, desc: 'Healing frequencies' },
 ];
 
+//////////////////////////////////////////// COMPONENT ////////////////////////////////////////////
+
 export default function Resources() {
+  ////////////////////////////////////////// RENDER //////////////////////////////////////////
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
@@ -32,24 +38,20 @@ export default function Resources() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.card} activeOpacity={0.75}>
-              <View style={styles.cardLeft}>
-                <View style={styles.iconCircle}>
-                  <Text style={styles.emoji}>{item.emoji}</Text>
-                </View>
-                <View>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  <Text style={styles.cardDesc}>{item.desc} · {item.count}</Text>
-                </View>
-              </View>
-              <ChevronRight size={18} color={AppColors.textMuted} strokeWidth={1.5} />
-            </TouchableOpacity>
+            <ResourceCard
+              emoji={item.emoji}
+              title={item.title}
+              desc={item.desc}
+              count={item.count}
+            />
           )}
         />
       </SafeAreaView>
     </View>
   );
 }
+
+//////////////////////////////////////////// STYLES ////////////////////////////////////////////
 
 const styles = StyleSheet.create({
   container: {
@@ -88,44 +90,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 100,
     gap: 12,
-  },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: AppColors.surface,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: AppColors.border,
-  },
-  cardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    flex: 1,
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: AppColors.surfaceAlt,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: AppColors.border,
-  },
-  emoji: {
-    fontSize: 22,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: AppColors.textPrimary,
-    marginBottom: 2,
-  },
-  cardDesc: {
-    fontSize: 13,
-    color: AppColors.textMuted,
   },
 });

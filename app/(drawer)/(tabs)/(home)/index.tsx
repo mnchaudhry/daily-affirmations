@@ -1,8 +1,12 @@
+import GratitudeEntryRow from '@/src/screens/home/GratitudeEntryRow';
 import { AppColors, Fonts } from '@/constants/theme';
-import { Bell, ChevronRight, Plus } from 'lucide-react-native';
+import { Bell, Plus } from 'lucide-react-native';
 import React from 'react';
-import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import WeekStrip from '@/src/screens/home/WeekStrip';
+
+//////////////////////////////////////////// VARIABLES ////////////////////////////////////////////
 
 interface GratitudeEntry {
   id: string;
@@ -19,6 +23,8 @@ const ENTRIES: GratitudeEntry[] = [
 ];
 
 const TODAY_GRATITUDE = 'the sunshine.';
+
+//////////////////////////////////////////// FUNCTIONS ////////////////////////////////////////////
 
 function getWeekDates() {
   const today = new Date();
@@ -45,10 +51,14 @@ function formatTodayDate() {
   });
 }
 
+//////////////////////////////////////////// COMPONENT ////////////////////////////////////////////
+
 export default function Home() {
+  ////////////////////////////////////////// VARIABLES //////////////////////////////////////////
   const weekDates = getWeekDates();
   const todayStr = formatTodayDate();
 
+  ////////////////////////////////////////// RENDER //////////////////////////////////////////
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
@@ -64,18 +74,7 @@ export default function Home() {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          <View style={styles.weekStrip}>
-            {weekDates.map((d, i) => (
-              <View key={i} style={styles.dayCell}>
-                <Text style={styles.dayLabel}>{d.label}</Text>
-                <View style={[styles.dateCircle, d.isToday && styles.dateCircleActive]}>
-                  <Text style={[styles.dateNum, d.isToday && styles.dateNumActive]}>
-                    {d.date}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
+          <WeekStrip days={weekDates} />
 
           <Text style={styles.dateStr}>{todayStr}</Text>
 
@@ -89,14 +88,7 @@ export default function Home() {
 
           <Text style={styles.sectionTitle}>Gratitude History</Text>
           {ENTRIES.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.entryRow} activeOpacity={0.7}>
-              <View style={styles.entryIcon}>
-                <Text style={styles.entryIconText}>🌿</Text>
-              </View>
-              <Text style={styles.entryText} numberOfLines={1}>{item.text}</Text>
-              <Text style={styles.entryDate}>{item.date}</Text>
-              <ChevronRight size={16} color={AppColors.textMuted} strokeWidth={1.5} />
-            </TouchableOpacity>
+            <GratitudeEntryRow key={item.id} text={item.text} date={item.date} />
           ))}
           <View style={{ height: 20 }} />
         </ScrollView>
@@ -104,6 +96,8 @@ export default function Home() {
     </View>
   );
 }
+
+//////////////////////////////////////////// STYLES ////////////////////////////////////////////
 
 const styles = StyleSheet.create({
   container: {
@@ -148,44 +142,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
-  weekStrip: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    backgroundColor: AppColors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: AppColors.border,
-  },
-  dayCell: {
-    alignItems: 'center',
-    gap: 6,
-  },
-  dayLabel: {
-    fontSize: 11,
-    color: AppColors.textMuted,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-  },
-  dateCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dateCircleActive: {
-    borderWidth: 1.5,
-    borderColor: AppColors.brown,
-  },
-  dateNum: {
-    fontSize: 14,
-    color: AppColors.textSecondary,
-  },
-  dateNumActive: {
-    color: AppColors.brown,
-    fontWeight: '700',
-  },
   dateStr: {
     fontSize: 13,
     color: AppColors.textMuted,
@@ -225,39 +181,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 4,
     marginTop: 4,
-  },
-  entryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    backgroundColor: AppColors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: AppColors.border,
-    gap: 12,
-  },
-  entryIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: AppColors.surfaceAlt,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: AppColors.border,
-  },
-  entryIconText: {
-    fontSize: 16,
-  },
-  entryText: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '500',
-    color: AppColors.textPrimary,
-  },
-  entryDate: {
-    fontSize: 13,
-    color: AppColors.textMuted,
-    marginRight: 4,
   },
 });

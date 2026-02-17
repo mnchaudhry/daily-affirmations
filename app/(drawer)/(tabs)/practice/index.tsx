@@ -1,22 +1,26 @@
-import { AppColors, Fonts } from '@/constants/theme';
-import { Bell, ChevronLeft, Edit3, Plus } from 'lucide-react-native';
+import { AppColors } from '@/constants/theme';
+import GratitudeJarIllustration from '@/src/screens/practice/GratitudeJarIllustration';
+import PillPromptInput from '@/src/screens/practice/PillPromptInput';
+import { Bell, ChevronLeft, Plus } from 'lucide-react-native';
 import React, { useState } from 'react';
-import {
-    ScrollView, StatusBar,
-    StyleSheet,
-    Text, TouchableOpacity,
-    View,
-} from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const PROMPTS = [
+//////////////////////////////////////////// VARIABLES ////////////////////////////////////////////
+
+const INITIAL_PROMPTS = [
   { id: '1', label: "Today, I'm grateful for", value: 'Sunshine' },
   { id: '2', label: 'Small thing I appreciate', value: 'Morning Coffee' },
   { id: '3', label: "I'm thankful for", value: 'My Best Friend' },
 ];
 
+//////////////////////////////////////////// COMPONENT ////////////////////////////////////////////
+
 export default function LogGratitude() {
-  const [prompts] = useState(PROMPTS);
+  ////////////////////////////////////////// STATE //////////////////////////////////////////
+  const [prompts] = useState(INITIAL_PROMPTS);
+
+  ////////////////////////////////////////// RENDER //////////////////////////////////////////
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
@@ -32,23 +36,14 @@ export default function LogGratitude() {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          <View style={styles.illustrationContainer}>
-            <Text style={styles.jarEmoji}>🫙</Text>
-            <View style={styles.heartsRow}>
-              <Text style={styles.heartEmoji}>❤️</Text>
-              <Text style={styles.heartEmoji}>❤️</Text>
-              <Text style={styles.heartEmoji}>❤️</Text>
-            </View>
-          </View>
+          <GratitudeJarIllustration />
 
           {prompts.map((prompt) => (
-            <View key={prompt.id} style={styles.promptBlock}>
-              <Text style={styles.promptLabel}>{prompt.label}</Text>
-              <TouchableOpacity style={styles.pillInput} activeOpacity={0.7}>
-                <Text style={styles.pillText}>{prompt.value}</Text>
-                <Edit3 size={16} color={AppColors.textMuted} strokeWidth={1.5} />
-              </TouchableOpacity>
-            </View>
+            <PillPromptInput
+              key={prompt.id}
+              label={prompt.label}
+              value={prompt.value}
+            />
           ))}
         </ScrollView>
 
@@ -59,6 +54,8 @@ export default function LogGratitude() {
     </View>
   );
 }
+
+//////////////////////////////////////////// STYLES ////////////////////////////////////////////
 
 const styles = StyleSheet.create({
   container: {
@@ -88,53 +85,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: AppColors.textPrimary,
-  },
-  illustrationContainer: {
-    marginTop: 20,
-    marginBottom: 32,
-    alignItems: 'center',
-  },
-  jarEmoji: {
-    fontSize: 80,
-  },
-  heartsRow: {
-    flexDirection: 'row',
-    gap: 4,
-    marginTop: -24,
-    marginLeft: 8,
-  },
-  heartEmoji: {
-    fontSize: 18,
-  },
-  promptBlock: {
-    width: '100%',
-    paddingHorizontal: 32,
-    marginBottom: 24,
-    alignItems: 'center',
-  },
-  promptLabel: {
-    fontSize: 14,
-    color: AppColors.textMuted,
-    marginBottom: 10,
-    letterSpacing: 0.2,
-  },
-  pillInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: AppColors.surface,
-    borderWidth: 2,
-    borderColor: AppColors.textPrimary,
-    borderRadius: 50,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    width: '100%',
-  },
-  pillText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: AppColors.textPrimary,
-    fontFamily: Fonts.serif,
   },
   fab: {
     position: 'absolute',

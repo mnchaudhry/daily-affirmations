@@ -1,9 +1,12 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Drawer } from 'expo-router/drawer';
-import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { Drawer } from 'expo-router/drawer';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+//////////////////////////////////////////// COMPONENT ////////////////////////////////////////////
 
 export default function DrawerLayout() {
+  ////////////////////////////////////////// RENDER //////////////////////////////////////////
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
@@ -28,3 +31,4 @@ export default function DrawerLayout() {
     </GestureHandlerRootView>
   );
 }
+

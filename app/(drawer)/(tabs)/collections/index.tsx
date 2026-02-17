@@ -1,24 +1,25 @@
 import { AppColors } from '@/constants/theme';
+import ChatBubble from '@/src/screens/collections/ChatBubble';
 import { Bell, Send } from 'lucide-react-native';
 import React from 'react';
-import {
-    ScrollView, StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+//////////////////////////////////////////// VARIABLES ////////////////////////////////////////////
+
 const CHAT_MESSAGES = [
-  { id: '1', role: 'ai', text: "Hello! I'm Freud AI, your mental wellness companion. How are you feeling today?" },
-  { id: '2', role: 'user', text: "I've been feeling a bit anxious lately." },
-  { id: '3', role: 'ai', text: "I understand. Anxiety can be challenging. Let's explore what might be triggering these feelings. What situations bring on the anxiety?" },
+  { id: '1', role: 'ai' as const, text: "Hello! I'm Freud AI, your mental wellness companion. How are you feeling today?" },
+  { id: '2', role: 'user' as const, text: "I've been feeling a bit anxious lately." },
+  { id: '3', role: 'ai' as const, text: "I understand. Anxiety can be challenging. Let's explore what might be triggering these feelings. What situations bring on the anxiety?" },
 ];
 
+//////////////////////////////////////////// COMPONENT ////////////////////////////////////////////
+
 export default function FreudAI() {
+  ////////////////////////////////////////// STATE //////////////////////////////////////////
   const [message, setMessage] = React.useState('');
+
+  ////////////////////////////////////////// RENDER //////////////////////////////////////////
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
@@ -33,9 +34,7 @@ export default function FreudAI() {
         <Text style={styles.subtitle}>Your mindful companion</Text>
         <ScrollView style={styles.chatArea} contentContainerStyle={styles.chatContent} showsVerticalScrollIndicator={false}>
           {CHAT_MESSAGES.map((msg) => (
-            <View key={msg.id} style={[styles.bubble, msg.role === 'user' ? styles.userBubble : styles.aiBubble]}>
-              <Text style={[styles.bubbleText, msg.role === 'user' && styles.userBubbleText]}>{msg.text}</Text>
-            </View>
+            <ChatBubble key={msg.id} role={msg.role} text={msg.text} />
           ))}
         </ScrollView>
         <View style={styles.inputRow}>
@@ -55,6 +54,8 @@ export default function FreudAI() {
     </View>
   );
 }
+
+//////////////////////////////////////////// STYLES ////////////////////////////////////////////
 
 const styles = StyleSheet.create({
   container: {
@@ -94,32 +95,6 @@ const styles = StyleSheet.create({
   chatContent: {
     gap: 12,
     paddingBottom: 20,
-  },
-  bubble: {
-    maxWidth: '80%',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-  },
-  aiBubble: {
-    backgroundColor: AppColors.surface,
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: AppColors.border,
-    borderBottomLeftRadius: 4,
-  },
-  userBubble: {
-    backgroundColor: AppColors.brown,
-    alignSelf: 'flex-end',
-    borderBottomRightRadius: 4,
-  },
-  bubbleText: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: AppColors.textPrimary,
-  },
-  userBubbleText: {
-    color: '#fff',
   },
   inputRow: {
     flexDirection: 'row',
