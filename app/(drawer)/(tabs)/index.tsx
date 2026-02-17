@@ -1,140 +1,263 @@
+import { AppColors, Fonts } from '@/constants/theme';
+import { Bell, ChevronRight, Plus } from 'lucide-react-native';
 import React from 'react';
-import { StyleSheet, View, FlatList, Dimensions, StatusBar, TouchableOpacity } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useNavigation } from 'expo-router';
-import * as Haptics from 'expo-haptics';
-import { Share, Heart, Menu } from 'lucide-react-native';
-import { DrawerActions } from '@react-navigation/native';
 
-import GlassCard from '@/components/GlassCard';
-import BackgroundContainer from '@/components/BackgroundContainer';
-import { Moods } from '@/constants/theme';
-
-const { width, height } = Dimensions.get('window');
-
-interface Affirmation {
+interface GratitudeEntry {
   id: string;
   text: string;
-  category: string;
+  date: string;
 }
 
-const DATA: Affirmation[] = [
-  { id: '1', text: "I possess the qualities needed to be extremely successful.", category: 'Wealth' },
-  { id: '2', text: "My ability to conquer my challenges is limitless; my potential to succeed is infinite.", category: 'Strength' },
-  { id: '3', text: "I am superior to negative thoughts and low actions.", category: 'Mindset' },
-  { id: '4', text: "I forgive myself for not being perfect.", category: 'Self-Love' },
-  { id: '5', text: "Every day, in every way, I am getting better and better.", category: 'Growth' },
+const ENTRIES: GratitudeEntry[] = [
+  { id: '1', text: "I'm grateful for the sunset", date: 'Jan 22' },
+  { id: '2', text: "I'm grateful for my family", date: 'Jan 21' },
+  { id: '3', text: "I'm grateful for the wind", date: 'Jan 25' },
+  { id: '4', text: "I'm grateful for good health", date: 'Jan 18' },
+  { id: '5', text: "I'm grateful for this moment", date: 'Jan 17' },
 ];
 
-export default function Page() {
-  const [activeMood] = React.useState<keyof typeof Moods>('morning');
-  const navigation = useNavigation();
+const TODAY_GRATITUDE = 'the sunshine.';
 
-  const renderItem = ({ item, index }: { item: Affirmation, index: number }) => (
-    <View style={styles.pageContainer}>
-      <GlassCard 
-        text={item.text} 
-        category={item.category} 
-        index={index} 
-      />
-    </View>
-  );
+function getWeekDates() {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return {
+      date: d.getDate(),
+      label: ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i],
+      isToday: d.toDateString() === today.toDateString(),
+    };
+  });
+}
 
-  const onMomentumScrollEnd = () => {
-    Haptics.selectionAsync();
-  };
+function formatTodayDate() {
+  return new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+export default function Home() {
+  const weekDates = getWeekDates();
+  const todayStr = formatTodayDate();
 
   return (
-    <BackgroundContainer mood={activeMood}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="light-content" />
-      
-      <SafeAreaView style={styles.container}>
-        {/* Header Actions */}
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
-            <TouchableOpacity 
-              style={styles.iconButton}
-              onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-            >
-                <Menu color="#fff" size={24} opacity={0.8} />
-            </TouchableOpacity>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>A</Text>
+          </View>
+          <Text style={styles.headerTitle}>Gratefulness</Text>
+          <TouchableOpacity style={styles.bellBtn}>
+            <Bell size={20} color={AppColors.textSecondary} strokeWidth={1.5} />
+          </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          snapToAlignment="center"
-          decelerationRate="fast"
-          onMomentumScrollEnd={onMomentumScrollEnd}
-          contentContainerStyle={styles.listContent}
-        />
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <View style={styles.weekStrip}>
+            {weekDates.map((d, i) => (
+              <View key={i} style={styles.dayCell}>
+                <Text style={styles.dayLabel}>{d.label}</Text>
+                <View style={[styles.dateCircle, d.isToday && styles.dateCircleActive]}>
+                  <Text style={[styles.dateNum, d.isToday && styles.dateNumActive]}>
+                    {d.date}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
 
-        {/* Floating Action Bar */}
-        <View style={styles.fabContainer}>
-            <TouchableOpacity style={styles.fabButton} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-                <Heart color="#fff" size={28} />
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={[styles.fabButton, styles.primaryFab]} onPress={() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)}>
-                <Share color="#000" size={28} />
-            </TouchableOpacity>
-        </View>
+          <Text style={styles.dateStr}>{todayStr}</Text>
 
+          <Text style={styles.gratitudeHeading}>
+            Today, I&#39;m grateful for {TODAY_GRATITUDE}
+          </Text>
+
+          <TouchableOpacity style={styles.addButton} activeOpacity={0.8}>
+            <Plus size={28} color="#fff" strokeWidth={2} />
+          </TouchableOpacity>
+
+          <Text style={styles.sectionTitle}>Gratitude History</Text>
+          {ENTRIES.map((item) => (
+            <TouchableOpacity key={item.id} style={styles.entryRow} activeOpacity={0.7}>
+              <View style={styles.entryIcon}>
+                <Text style={styles.entryIconText}>🌿</Text>
+              </View>
+              <Text style={styles.entryText} numberOfLines={1}>{item.text}</Text>
+              <Text style={styles.entryDate}>{item.date}</Text>
+              <ChevronRight size={16} color={AppColors.textMuted} strokeWidth={1.5} />
+            </TouchableOpacity>
+          ))}
+          <View style={{ height: 20 }} />
+        </ScrollView>
       </SafeAreaView>
-    </BackgroundContainer>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: AppColors.background,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   header: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    zIndex: 10,
-  },
-  iconButton: {
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-  },
-  listContent: {
-  },
-  pageContainer: {
-    width: width,
-    height: height, 
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fabContainer: {
-    position: 'absolute',
-    bottom: 110,
-    width: '100%',
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  avatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: AppColors.brown,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 40,
   },
-  fabButton: {
+  avatarText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: AppColors.textPrimary,
+    letterSpacing: 0.3,
+  },
+  bellBtn: {
+    width: 38,
+    height: 38,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  weekStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.border,
+  },
+  dayCell: {
+    alignItems: 'center',
+    gap: 6,
+  },
+  dayLabel: {
+    fontSize: 11,
+    color: AppColors.textMuted,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+  },
+  dateCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dateCircleActive: {
+    borderWidth: 1.5,
+    borderColor: AppColors.brown,
+  },
+  dateNum: {
+    fontSize: 14,
+    color: AppColors.textSecondary,
+  },
+  dateNumActive: {
+    color: AppColors.brown,
+    fontWeight: '700',
+  },
+  dateStr: {
+    fontSize: 13,
+    color: AppColors.textMuted,
+    textAlign: 'center',
+    marginTop: 20,
+    letterSpacing: 0.3,
+  },
+  gratitudeHeading: {
+    fontSize: 34,
+    lineHeight: 46,
+    fontFamily: Fonts.serif,
+    color: AppColors.textPrimary,
+    paddingHorizontal: 24,
+    marginTop: 10,
+    fontWeight: '400',
+  },
+  addButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: AppColors.brown,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 24,
+    marginBottom: 32,
+    shadowColor: AppColors.brown,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: AppColors.textPrimary,
+    paddingHorizontal: 20,
+    marginBottom: 4,
+    marginTop: 4,
+  },
+  entryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    backgroundColor: AppColors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.border,
+    gap: 12,
+  },
+  entryIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: AppColors.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: AppColors.border,
   },
-  primaryFab: {
-    backgroundColor: '#fff',
-    transform: [{ scale: 1.1 }],
-    shadowColor: "#fff",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-  }
+  entryIconText: {
+    fontSize: 16,
+  },
+  entryText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '500',
+    color: AppColors.textPrimary,
+  },
+  entryDate: {
+    fontSize: 13,
+    color: AppColors.textMuted,
+    marginRight: 4,
+  },
 });

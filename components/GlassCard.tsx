@@ -1,118 +1,161 @@
-import React from 'react';
-import { StyleSheet, Text, View, Dimensions, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { AppColors, Fonts } from '@/constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import { Heart, Share2, ThumbsUp } from 'lucide-react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-const { width, height } = Dimensions.get('window');
-const CARD_WIDTH = width * 0.85;
-const CARD_HEIGHT = height * 0.6;
-
-interface GlassCardProps {
+interface QuoteCardProps {
   text: string;
-  category?: string;
-  index: number;
+  author?: string;
+  index?: number;
+  likes?: number;
+  loves?: number;
+  shares?: number;
 }
 
-export default function GlassCard({ text, category = 'Daily Thought', index }: GlassCardProps) {
-  return (
-    <Animated.View 
-      entering={FadeInDown.delay(index * 100).springify()}
-      style={styles.cardContainer}
-    >
-      <BlurView intensity={80} tint="light" style={styles.blurContainer}>
-        <LinearGradient
-          colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.1)']}
-          style={styles.gradientBorder}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.innerContent}>
-            <View style={styles.header}>
-              <Text style={styles.category}>{category.toUpperCase()}</Text>
-              <View style={styles.scrim} />
-            </View>
-            
-            <Text style={styles.text}>{text}</Text>
+export default function GlassCard({
+  text,
+  author,
+  index = 0,
+  likes = 99,
+  loves = 125,
+  shares = 7,
+}: QuoteCardProps) {
+  const [loved, setLoved] = React.useState(false);
 
-            <View style={styles.footer}>
-              <Text style={styles.brand}>Daily Affirmations</Text>
-            </View>
-          </View>
-        </LinearGradient>
-      </BlurView>
+  return (
+    <Animated.View entering={FadeIn.delay(index * 80)} style={styles.container}>
+      <LinearGradient
+        colors={['#1A2B1A', '#2D3E2D', '#1A2320']}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+      <View style={styles.overlay} />
+
+      <View style={styles.counterContainer}>
+        <Text style={styles.counter}>99</Text>
+      </View>
+
+      <View style={styles.content}>
+        <Text style={styles.quoteText}>"{text}"</Text>
+        {author ? <Text style={styles.author}>{author}</Text> : null}
+      </View>
+
+      <View style={styles.stats}>
+        <View style={styles.stat}>
+          <Heart size={15} color="rgba(255,255,255,0.65)" />
+          <Text style={styles.statText}>{loves} love</Text>
+        </View>
+        <View style={styles.stat}>
+          <ThumbsUp size={15} color="rgba(255,255,255,0.65)" />
+          <Text style={styles.statText}>{likes} likes</Text>
+        </View>
+        <View style={styles.stat}>
+          <Share2 size={15} color="rgba(255,255,255,0.65)" />
+          <Text style={styles.statText}>{shares} share</Text>
+        </View>
+      </View>
+
+      <View style={styles.actionBar}>
+        <TouchableOpacity style={styles.actionBtn}>
+          <Share2 size={24} color={AppColors.textSecondary} strokeWidth={1.5} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.loveFab} onPress={() => setLoved(!loved)}>
+          <Heart size={28} color="#fff" fill={loved ? '#fff' : 'transparent'} strokeWidth={1.75} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionBtn}>
+          <ThumbsUp size={24} color={AppColors.textSecondary} strokeWidth={1.5} />
+        </TouchableOpacity>
+      </View>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
-    borderRadius: 30,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  blurContainer: {
+  container: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    backgroundColor: '#1A2B1A',
   },
-  gradientBorder: {
-    flex: 1,
-    padding: 2, // Border width effect
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
-  innerContent: {
-    flex: 1,
-    padding: 30,
-    justifyContent: 'space-between',
+  counterContainer: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)', // Subtle tint
+    marginTop: 80,
   },
-  header: {
-    width: '100%',
+  counter: {
+    fontSize: 72,
+    fontWeight: '200',
+    color: 'rgba(255,255,255,0.9)',
+    fontFamily: Fonts.serif,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+  },
+  quoteText: {
+    fontSize: 28,
+    lineHeight: 44,
+    color: '#FFFFFF',
+    fontFamily: Fonts.serif,
+    textAlign: 'center',
+    fontWeight: '400',
+  },
+  author: {
+    marginTop: 24,
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.65)',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    fontFamily: Fonts.serif,
+  },
+  stats: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 20,
+    gap: 28,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
-  scrim: {
-    position: 'absolute',
-    top: -10,
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+  stat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-  category: {
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 2,
-    color: 'rgba(0,0,0,0.4)',
-    marginTop: 20,
+  statText: {
+    color: 'rgba(255,255,255,0.65)',
+    fontSize: 14,
   },
-  text: {
-    fontSize: 32,
-    fontWeight: '300',
-    textAlign: 'center',
-    color: '#333',
-    lineHeight: 44,
-    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif' }),
+  actionBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingVertical: 24,
+    paddingHorizontal: 40,
+    paddingBottom: 44,
   },
-  footer: {
-    opacity: 0.5,
+  actionBtn: {
+    padding: 10,
   },
-  brand: {
-    fontSize: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+  loveFab: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: AppColors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: AppColors.accent,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+    transform: [{ translateY: -24 }],
   },
 });
+

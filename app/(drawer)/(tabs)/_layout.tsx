@@ -1,58 +1,100 @@
-import React from 'react';
+import { AppColors } from '@/constants/theme';
 import { Tabs } from 'expo-router';
-import { BlurView } from 'expo-blur';
-import { View, StyleSheet, Platform } from 'react-native';
-import { Home, List, Heart, Sparkles } from 'lucide-react-native';
+import { BookOpen, Brain, Home, RefreshCw, User } from 'lucide-react-native';
+import React from 'react';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+function CenterTabButton({ children, onPress }: { children: React.ReactNode; onPress?: (...args: unknown[]) => void }) {
+  return (
+    <TouchableOpacity style={styles.centerTabWrapper} onPress={onPress} activeOpacity={0.85}>
+      <View style={styles.centerTabCircle}>{children}</View>
+    </TouchableOpacity>
+  );
+}
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          elevation: 0,
-          borderTopWidth: 0,
-          height: Platform.OS === 'ios' ? 85 : 60,
-          backgroundColor: 'transparent',
-        },
-        tabBarBackground: () => (
-          <View style={StyleSheet.absoluteFill}>
-            <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
-          </View>
-        ),
-        tabBarActiveTintColor: '#fff',
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
-        tabBarShowLabel: false,
+        tabBarStyle: styles.tabBar,
+        tabBarActiveTintColor: AppColors.accent,
+        tabBarInactiveTintColor: AppColors.textMuted,
+        tabBarLabelStyle: styles.tabLabel,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color }) => <Home color={color} size={24} />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <Home color={color} size={22} strokeWidth={1.75} />,
         }}
       />
       <Tabs.Screen
         name="collections"
         options={{
-          tabBarIcon: ({ color }) => <List color={color} size={24} />,
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          tabBarIcon: ({ color }) => <Heart color={color} size={24} />,
+          title: 'Freud AI',
+          tabBarIcon: ({ color }) => <Brain color={color} size={22} strokeWidth={1.75} />,
         }}
       />
       <Tabs.Screen
         name="practice"
         options={{
-          tabBarIcon: ({ color }) => <Sparkles color={color} size={24} />,
+          title: '',
+          tabBarIcon: () => <RefreshCw color="#fff" size={22} strokeWidth={1.75} />,
+          tabBarButton: (props) => <CenterTabButton {...props} />,
+        }}
+      />
+      <Tabs.Screen
+        name="favorites"
+        options={{
+          title: 'Resources',
+          tabBarIcon: ({ color }) => <BookOpen color={color} size={22} strokeWidth={1.75} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <User color={color} size={22} strokeWidth={1.75} />,
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: AppColors.tabBar,
+    borderTopWidth: 1,
+    borderTopColor: AppColors.border,
+    height: Platform.OS === 'ios' ? 85 : 65,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+    paddingTop: 8,
+    elevation: 0,
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.2,
+  },
+  centerTabWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centerTabCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: AppColors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ translateY: -12 }],
+    shadowColor: AppColors.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+});
