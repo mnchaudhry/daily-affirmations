@@ -1,6 +1,6 @@
 import { AppColors } from '@/constants/theme';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 //////////////////////////////////////////// TYPES ////////////////////////////////////////////
 
@@ -8,6 +8,7 @@ interface WeekDay {
   date: number;
   label: string;
   isToday: boolean;
+  hasEntry?: boolean;
 }
 
 interface WeekStripProps {
@@ -19,16 +20,21 @@ interface WeekStripProps {
 export default function WeekStrip({ days }: WeekStripProps) {
   ////////////////////////////////////////// RENDER //////////////////////////////////////////
   return (
-    <View style={styles.weekStrip}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.weekStrip}
+    >
       {days.map((d, i) => (
         <View key={i} style={styles.dayCell}>
-          <Text style={styles.dayLabel}>{d.label}</Text>
-          <View style={[styles.dateCircle, d.isToday && styles.dateCircleActive]}>
+          <Text style={[styles.dayLabel, d.isToday && styles.dayLabelActive]}>{d.label}</Text>
+          <View style={[styles.datePill, d.isToday && styles.datePillActive]}>
             <Text style={[styles.dateNum, d.isToday && styles.dateNumActive]}>{d.date}</Text>
           </View>
+          {d.hasEntry && <View style={styles.entryDot} />}
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -37,40 +43,52 @@ export default function WeekStrip({ days }: WeekStripProps) {
 const styles = StyleSheet.create({
   weekStrip: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: AppColors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: AppColors.border,
+    gap: 6,
   },
   dayCell: {
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
+    minWidth: 44,
   },
   dayLabel: {
     fontSize: 11,
     color: AppColors.textMuted,
     fontWeight: '500',
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  dateCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+  dayLabelActive: {
+    color: AppColors.brown,
+  },
+  datePill: {
+    width: 36,
+    height: 44,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
-  dateCircleActive: {
+  datePillActive: {
     borderWidth: 1.5,
     borderColor: AppColors.brown,
+    backgroundColor: 'rgba(92,61,46,0.05)',
   },
   dateNum: {
-    fontSize: 14,
+    fontSize: 15,
     color: AppColors.textSecondary,
+    fontWeight: '400',
   },
   dateNumActive: {
     color: AppColors.brown,
     fontWeight: '700',
+  },
+  entryDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: AppColors.brown,
+    marginTop: 1,
   },
 });

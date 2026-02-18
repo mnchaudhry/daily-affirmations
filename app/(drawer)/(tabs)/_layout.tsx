@@ -1,7 +1,6 @@
-import CenterTabButton from '@/components/CenterTabButton';
 import { AppColors } from '@/constants/theme';
 import { Tabs } from 'expo-router';
-import { BookOpen, Brain, Home, RefreshCw, User } from 'lucide-react-native';
+import { Bookmark, Compass, Home, User } from 'lucide-react-native';
 import React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 
@@ -22,30 +21,22 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(home)/index"
         options={{
-          title: 'Home',
+          title: 'Today',
           tabBarIcon: ({ color }) => <Home color={color} size={22} strokeWidth={1.75} />,
         }}
       />
       <Tabs.Screen
         name="collections/index"
         options={{
-          title: 'Freud AI',
-          tabBarIcon: ({ color }) => <Brain color={color} size={22} strokeWidth={1.75} />,
-        }}
-      />
-      <Tabs.Screen
-        name="practice/index"
-        options={{
-          title: '',
-          tabBarIcon: () => <RefreshCw color="#fff" size={22} strokeWidth={1.75} />,
-          tabBarButton: (props) => <CenterTabButton {...props} />,
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <Compass color={color} size={22} strokeWidth={1.75} />,
         }}
       />
       <Tabs.Screen
         name="favorites/index"
         options={{
-          title: 'Resources',
-          tabBarIcon: ({ color }) => <BookOpen color={color} size={22} strokeWidth={1.75} />,
+          title: 'Saved',
+          tabBarIcon: ({ color }) => <Bookmark color={color} size={22} strokeWidth={1.75} />,
         }}
       />
       <Tabs.Screen
@@ -54,6 +45,11 @@ export default function TabLayout() {
           title: 'Profile',
           tabBarIcon: ({ color }) => <User color={color} size={22} strokeWidth={1.75} />,
         }}
+      />
+      {/* Hide practice tab - kept for file-routing compatibility */}
+      <Tabs.Screen
+        name="practice/index"
+        options={{ href: null }}
       />
     </Tabs>
   );
