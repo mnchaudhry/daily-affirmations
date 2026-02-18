@@ -5,23 +5,13 @@ import { useSaved } from '@/src/store/savedStore';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect } from 'react';
 import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native';
-import Animated, {
-    FadeIn,
-    FadeInDown,
-    useAnimatedStyle,
-    useSharedValue,
-    withDelay,
-    withRepeat,
-    withSequence,
-    withSpring,
-    withTiming,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming, } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 //////////////////////////////////////////// SUB-COMPONENTS ////////////////////////////////////////////
 
 function EmptyState() {
-  const floatY   = useSharedValue(0);
+  const floatY = useSharedValue(0);
   const heartScale = useSharedValue(0.5);
   const heartOpac = useSharedValue(0);
 
@@ -30,18 +20,21 @@ function EmptyState() {
     floatY.value = withRepeat(
       withSequence(
         withTiming(-12, { duration: 1800 }),
-        withTiming(0,  { duration: 1800 }),
+        withTiming(0, { duration: 1800 }),
       ),
       -1,
       true,
     );
     // Pop in
     heartScale.value = withDelay(200, withSpring(1, { damping: 6, stiffness: 160 }));
-    heartOpac.value  = withDelay(200, withTiming(1, { duration: 400 }));
-  }, []);
+    heartOpac.value = withDelay(200, withTiming(1, { duration: 400 }));
+  }, [floatY, heartOpac, heartScale]);
 
   const heartStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatY.value }, { scale: heartScale.value }],
+    transform: [
+      { translateY: floatY.value as number },
+      { scale: heartScale.value as number },
+    ] as const,
     opacity: heartOpac.value,
   }));
 
