@@ -1,5 +1,7 @@
-import { AppColors } from '@/constants/theme';
+import { AppColors, Fonts } from '@/constants/theme';
+import HomeDecor from '@/src/components/HomeDecor';
 import { useStreak } from '@/src/hooks/useStreak';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Bell, ChevronRight, Info, Moon, Star } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
@@ -17,7 +19,14 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
+      <StatusBar barStyle="dark-content" />
+      <LinearGradient
+        colors={['#F8EDD8', '#EDE4CC', '#E8DCC0'] as const}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0.1, y: 0 }}
+        end={{ x: 0.9, y: 1 }}
+      />
+      <HomeDecor />
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Text style={styles.title}>Profile</Text>
@@ -87,11 +96,11 @@ export default function ProfileScreen() {
 //////////////////////////////////////////// STYLES ////////////////////////////////////////////
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: AppColors.background },
+  container: { flex: 1 },
   safeArea: { flex: 1 },
-  header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16 },
-  title: { fontSize: 24, fontWeight: '700', color: AppColors.textPrimary },
-  scroll: { paddingBottom: 60, paddingTop: 4 },
+  header: { paddingHorizontal: 22, paddingTop: 10, paddingBottom: 16 },
+  title: { fontSize: 30, fontWeight: '800', color: AppColors.textPrimary, fontFamily: Fonts.serif, letterSpacing: 0.1 },
+  scroll: { paddingBottom: 120, paddingTop: 4 },
   streakCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -101,15 +110,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     gap: 14,
-    shadowColor: '#2C1A0E',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    shadowColor: '#1E1209',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
     elevation: 3,
   },
   streakEmoji: { fontSize: 36 },
   streakBody: { gap: 3 },
-  streakNum: { fontSize: 22, fontWeight: '700', color: AppColors.textPrimary },
+  streakNum: { fontSize: 22, fontWeight: '800', color: AppColors.textPrimary, fontFamily: Fonts.serif },
   streakSub: { fontSize: 13, color: AppColors.textMuted },
   sectionLabel: {
     fontSize: 12,

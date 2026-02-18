@@ -1,10 +1,13 @@
-import { AppColors } from '@/constants/theme';
+import { Fonts, getTimeOfDay, TimeThemes } from '@/constants/theme';
+import HomeDecor from '@/src/components/HomeDecor';
 import QuoteCard from '@/src/components/QuoteCard';
 import { getQuoteOfTheDay, QUOTES } from '@/src/data/quotes';
 import { useStreak } from '@/src/hooks/useStreak';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Bell, RefreshCw } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 //////////////////////////////////////////// FUNCTIONS ////////////////////////////////////////////
@@ -27,6 +30,8 @@ function getRandomQuote(excludeId?: string) {
 export default function TodayScreen() {
   const streak = useStreak();
   const [quote, setQuote] = useState(getQuoteOfTheDay);
+  const tod = getTimeOfDay();
+  const theme = TimeThemes[tod];
 
   const handleRefresh = () => {
     setQuote((prev) => getRandomQuote(prev.id));
@@ -34,36 +39,65 @@ export default function TodayScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={AppColors.background} />
+      <StatusBar barStyle="dark-content" />
+
+      {/* ─── Gradient base ─────────────────────────────────────────────── */}
+      <LinearGradient
+        colors={theme.gradient}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0.1, y: 0 }}
+        end={{ x: 0.9, y: 1 }}
+      />
+
+      {/* ─── SVG botanical decorations ─────────────────────────────────── */}
+      <HomeDecor />
+
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
+        {/* ─── Header ──────────────────────────────────────────────────── */}
+        <Animated.View entering={FadeInDown.duration(500).springify()} style={styles.header}>
           <View style={styles.dateBlock}>
-            <Text style={styles.appName}>Daily Affirmations</Text>
-            <Text style={styles.dateText}>{formatDate()}</Text>
+            <Text style={[styles.greeting, { color: theme.textColor }]}>
+              {theme.greeting} {theme.greetingEmoji}
+            </Text>
+            <Text style={[styles.dateText, { color: theme.subtitleColor }]}>{formatDate()}</Text>
           </View>
           <View style={styles.headerRight}>
             {streak > 0 && (
               <View style={styles.streakBadge}>
-                <Text style={styles.streakText}>🔥 {streak}</Text>
+                <Text style={styles.streakEmoji}>🔥</Text>
+                <Text style={[styles.streakNum, { color: theme.textColor }]}>{streak}</Text>
               </View>
             )}
             <TouchableOpacity style={styles.iconBtn}>
-              <Bell size={20} color={AppColors.textSecondary} strokeWidth={1.5} />
+              <Bell size={20} color={theme.subtitleColor} strokeWidth={1.5} />
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
 
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scroll}
           bounces={false}
         >
-          <QuoteCard quote={quote} variant="hero" />
+          {/* ─── Quote ─────────────────────────────────────────────────── */}
+          <Animated.View entering={FadeInUp.delay(150).duration(600).springify()}>
+            <QuoteCard quote={quote} variant="hero" />
+          </Animated.View>
 
-          <TouchableOpacity style={styles.refreshBtn} onPress={handleRefresh} activeOpacity={0.8}>
-            <RefreshCw size={16} color={AppColors.textSecondary} strokeWidth={1.75} />
-            <Text style={styles.refreshLabel}>New quote</Text>
-          </TouchableOpacity>
+          {/* ─── Refresh ───────────────────────────────────────────────── */}
+          <Animated.View entering={FadeInUp.delay(300).duration(500)} style={styles.refreshRow}>
+            <TouchableOpacity style={styles.refreshBtn} onPress={handleRefresh} activeOpacity={0.85}>
+              <LinearGradient
+                colors={['#F4CA9E', '#EDB87E']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.refreshGradient}
+              >
+                <RefreshCw size={15} color="#6F4B2A" strokeWidth={2} />
+                <Text style={styles.refreshLabel}>New quote</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </Animated.View>
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -75,7 +109,6 @@ export default function TodayScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: AppColors.background,
   },
   safeArea: {
     flex: 1,
@@ -84,23 +117,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 20,
+    paddingHorizontal: 22,
+    paddingTop: 10,
+    paddingBottom: 18,
   },
   dateBlock: {
-    gap: 2,
+    gap: 3,
   },
-  appName: {
-    fontSize: 20,
+  greeting: {
+    fontSize: 24,
     fontWeight: '700',
-    color: AppColors.textPrimary,
-    letterSpacing: 0.2,
+    fontFamily: Fonts.serif,
+    letterSpacing: 0.1,
   },
   dateText: {
     fontSize: 13,
-    color: AppColors.textMuted,
     fontWeight: '400',
+    letterSpacing: 0.1,
   },
   headerRight: {
     flexDirection: 'row',
@@ -108,47 +141,60 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   streakBadge: {
-    backgroundColor: AppColors.surface,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 1,
-    borderColor: AppColors.border,
-  },
-  streakText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: AppColors.textPrimary,
-  },
-  iconBtn: {
-    width: 36,
-    height: 36,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scroll: {
-    paddingBottom: 40,
-    justifyContent: 'center',
-    flexGrow: 1,
-    gap: 20,
-  },
-  refreshBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 7,
-    paddingVertical: 12,
-    marginHorizontal: 20,
-    borderRadius: 14,
-    backgroundColor: AppColors.surface,
+    gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.70)',
+    borderRadius: 20,
+    paddingHorizontal: 11,
+    paddingVertical: 6,
     borderWidth: 1,
-    borderColor: AppColors.border,
+    borderColor: 'rgba(255,255,255,0.90)',
+  },
+  streakEmoji: {
+    fontSize: 13,
+  },
+  streakNum: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  iconBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.70)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.90)',
+  },
+  scroll: {
+    paddingBottom: 120,
+    flexGrow: 1,
+    justifyContent: 'center',
+    gap: 18,
+  },
+  refreshRow: {
+    alignItems: 'center',
+  },
+  refreshBtn: {
+    borderRadius: 32,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.9)',
+  },
+  refreshGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    paddingVertical: 13,
+    paddingHorizontal: 26,
   },
   refreshLabel: {
     fontSize: 14,
-    color: AppColors.textSecondary,
     fontWeight: '500',
+    letterSpacing: 0.2,
+    color: '#6F4B2A',
   },
 });
-
 
